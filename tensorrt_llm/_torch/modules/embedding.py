@@ -68,6 +68,8 @@ class LMHead(Linear):
         out_features_full = (local_out_features *
                              tp_size if tensor_parallel_mode
                              == TensorParallelMode.COLUMN else num_embeddings)
+        force_dynamic_quantization = (quant_config is not None
+                                      and quant_config.quant_algo is not None)
         super().__init__(
             in_features_full,
             out_features_full,
@@ -79,6 +81,7 @@ class LMHead(Linear):
             reduce_output=reduce_output,
             use_custom_cublas_mm=use_custom_cublas_mm,
             quant_config=quant_config,
+            force_dynamic_quantization=force_dynamic_quantization,
         )
 
         if tensor_parallel_mode == TensorParallelMode.ROW:
